@@ -9,8 +9,11 @@ import android.os.Handler
 import android.util.Log
 import android.provider.MediaStore
 import android.content.ContentUris
+import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
+import com.google.android.material.snackbar.Snackbar
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -47,28 +50,30 @@ class MainActivity : AppCompatActivity() {
             getContentsInfo_2()
         }
         button_2.setOnClickListener {
-            if (Button_NUM == 0) {
-                mTimer = Timer()
-                mTimer!!.schedule(object : TimerTask() {
-                    override fun run() {
-                        mTimerSec += 2.0
-                        NUM = (NUM + 1) % PHOTO.size
-                        mHandler.post {
-                            imageView.setImageURI(PHOTO[NUM])
+            if (PHOTO.size >= 1) {
+                if (Button_NUM == 0) {
+                    mTimer = Timer()
+                    mTimer!!.schedule(object : TimerTask() {
+                        override fun run() {
+                            mTimerSec += 2.0
+                            NUM = (NUM + 1) % PHOTO.size
+                            mHandler.post {
+                                imageView.setImageURI(PHOTO[NUM])
+                            }
                         }
-                    }
-                }, 2000, 2000)
-                Button_NUM = 1
-                button_0.isEnabled = false
-                button_1.isEnabled = false
-                button_2.text = "停止"
-            } else {
-                mTimer!!.cancel()
-                mTimer = null
-                Button_NUM = 0
-                button_0.isEnabled = true
-                button_1.isEnabled = true
-                button_2.text = "再生"
+                    }, 2000, 2000)
+                    Button_NUM = 1
+                    button_0.isEnabled = false
+                    button_1.isEnabled = false
+                    button_2.text = "停止"
+                } else {
+                    mTimer!!.cancel()
+                    mTimer = null
+                    Button_NUM = 0
+                    button_0.isEnabled = true
+                    button_1.isEnabled = true
+                    button_2.text = "再生"
+                }
             }
         }
     }
@@ -78,6 +83,10 @@ class MainActivity : AppCompatActivity() {
             PERMISSIONS_REQUEST_CODE ->
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     getContentsInfo_0()
+                } else {
+                    button_0.isEnabled = false
+                    button_1.isEnabled = false
+                    button_2.isEnabled = false
                 }
         }
     }
@@ -110,12 +119,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getContentsInfo_1() {
-        NUM = (NUM + 1) % PHOTO.size
-        imageView.setImageURI(PHOTO[NUM])
+        if (PHOTO.size >= 1) {
+            NUM = (NUM + 1) % PHOTO.size
+            imageView.setImageURI(PHOTO[NUM])
+        }
     }
 
     private fun getContentsInfo_2() {
-        NUM = (NUM + (PHOTO.size - 1)) % PHOTO.size
-        imageView.setImageURI(PHOTO[NUM])
+        if (PHOTO.size >= 1) {
+            NUM = (NUM + (PHOTO.size - 1)) % PHOTO.size
+            imageView.setImageURI(PHOTO[NUM])
+        }
     }
 }
